@@ -1,4 +1,3 @@
-backend/parameters/mnist_model_biases.csv
-backend/parameters/mnist_model_weights.csv
+model/mnist/mnist_train.csv
 model/archive.py
 __pycache__/
