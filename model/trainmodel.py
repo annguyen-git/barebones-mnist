@@ -71,10 +71,11 @@ def save_model_no_numpy(W, b):
 train_images, train_labels = load_mnist_csv(os.path.join(DATA_DIR, "mnist_train.csv"))
 test_images, test_labels = load_mnist_csv(os.path.join(DATA_DIR, "mnist_test.csv"))
 
-X_train = train_images.astype(np.float32) / 255.0
+threshold = 51
+X_train = (train_images > threshold).astype(int)
 y_train = train_labels.astype(np.int64)
 
-X_test = test_images.astype(np.float32) / 255.0
+X_test = (test_images > threshold).astype(int)
 y_test = test_labels.astype(np.int64)
 
 print("Start training...")
