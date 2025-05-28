@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Draw Digit (28x28)</title>
+<style>
+  body {
+    display: flex; flex-direction: column; align-items: center; font-family: Arial, sans-serif;
+    margin-top: 20px;
+  }
+  #canvas {
+    border: 1px solid #333;
+    image-rendering: pixelated;
+    width: 280px;
+    height: 280px;
+    background-color: black;
+    cursor: crosshair;
+  }
+  button {
+    margin-top: 15px;
+    padding: 8px 16px;
+    font-size: 16px;
+  }
+  #output, #flattenedOutput {
+    margin-top: 15px;
+    font-family: monospace;
+    white-space: pre-wrap;
+    max-width: 300px;
+  }
+  #output {
+    font-size: 24px;
+  }
+  #flattenedContainer {
+    display: none;
+    text-align: center;
+    max-width: 320px;
+  }
+  #flattenedOutput {
+    font-size: 12px;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 8px;
+    background: #f7f7f7;
+  }
+</style>
+</head>
+<body>
+
+<h2>Draw a digit (28x28)</h2>
+<canvas id="canvas" width="28" height="28"></canvas>
+<button id="clearBtn">Clear</button>
+<button id="exportBtn">See the number!</button>
+
+<pre id="output"></pre>
+
+<div id="flattenedContainer">
+  <p>The pixels are flattened and the input to the model looks like this:</p>
+  <pre id="flattenedOutput"></pre>
+</div>
+
+<script>
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const clearBtn = document.getElementById('clearBtn');
+  const exportBtn = document.getElementById('exportBtn');
+  const output = document.getElementById('output');
+  const flattenedOutput = document.getElementById('flattenedOutput');
+  const flattenedContainer = document.getElementById('flattenedContainer');
+
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  let drawing = false;
+
+  function drawPixel(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    let x = Math.floor((clientX - rect.left) * scaleX);
+    let y = Math.floor((clientY - rect.top) * scaleY);
+    x = Math.min(Math.max(x, 0), canvas.width - 1);
+    y = Math.min(Math.max(y, 0), canvas.height - 1);
+    ctx.fillStyle = 'white';
+    ctx.fillRect(x, y, 2, 2); // 2x2 brush
+  }
+
+  canvas.addEventListener('mousedown', (e) => {
+    drawing = true;
+    drawPixel(e.clientX, e.clientY);
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (!drawing) return;
+    drawPixel(e.clientX, e.clientY);
+  });
+
+  window.addEventListener('mouseup', () => {
+    drawing = false;
+  });
+
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    drawing = true;
+    const touch = e.touches[0];
+    drawPixel(touch.clientX, touch.clientY);
+  });
+
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (!drawing) return;
+    const touch = e.touches[0];
+    drawPixel(touch.clientX, touch.clientY);
+  });
+
+  window.addEventListener('touchend', () => {
+    drawing = false;
+  });
+
+  clearBtn.addEventListener('click', () => {
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    output.textContent = '';
+    flattenedOutput.textContent = '';
+    flattenedContainer.style.display = 'none';
+  });
+
+  exportBtn.addEventListener('click', () => {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    let grayscale = [];
+    for (let i = 0; i < data.length; i += 4) {
+      grayscale.push(data[i]);
+    }
+
+    let binarized = grayscale.map(value => value > 128 ? 1 : 0);
+    flattenedOutput.textContent = binarized.join(", ");
+    flattenedContainer.style.display = 'block';
+
+    fetch("http://192.168.0.104:8000/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: binarized })
+    })
+    .then(res => res.json())
+    .then(data => {
+      output.textContent = "Prediction: " + data.prediction;
+    })
+    .catch(err => {
+      output.textContent = "Error: " + err;
+    });
+  });
+</script>
+
+</body>
+</html>
