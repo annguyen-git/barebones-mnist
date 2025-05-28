@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Draw Digit (28x28)</title>
+<title>Draw Digit</title>
 <style>
   body {
     display: flex; flex-direction: column; align-items: center; font-family: Arial, sans-serif;
@@ -51,12 +51,12 @@
 <h2>Draw a digit (28x28)</h2>
 <canvas id="canvas" width="28" height="28"></canvas>
 <button id="clearBtn">Clear</button>
-<button id="exportBtn">See the number!</button>
+<button id="exportBtn">Identify!</button>
 
 <pre id="output"></pre>
 
 <div id="flattenedContainer">
-  <p>The pixels are flattened and the input to the model looks like this:</p>
+  <p>Model: Mutilclass Logistic Regression, acuracy 92%. <br> The pixels are flattened and the input to the model looks like this:</p>
   <pre id="flattenedOutput"></pre>
 </div>
 
@@ -138,7 +138,7 @@
     flattenedOutput.textContent = binarized.join(", ");
     flattenedContainer.style.display = 'block';
 
-    fetch("http://192.168.0.104:8000/predict", {
+    fetch("http://5.150.216.178:8000/predict", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ image: binarized })
