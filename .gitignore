@@ -1,3 +1,4 @@
-model/mnist/mnist_train.csv
+model/mnist/
+model/data/
 model/archive.py
 __pycache__/

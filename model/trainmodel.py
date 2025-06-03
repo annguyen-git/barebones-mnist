@@ -68,10 +68,10 @@ def save_model_no_numpy(W, b):
         writer = csv.writer(f)
         writer.writerow(b)
 
-train_images, train_labels = load_mnist_csv(os.path.join(DATA_DIR, "mnist_train.csv"))
-test_images, test_labels = load_mnist_csv(os.path.join(DATA_DIR, "mnist_test.csv"))
+train_images, train_labels = load_mnist_csv(os.path.join(DATA_DIR, "emnist_digits_train.csv"))
+test_images, test_labels = load_mnist_csv(os.path.join(DATA_DIR, "emnist_digits_test.csv"))
 
-threshold = 51
+threshold = 0.2
 X_train = (train_images > threshold).astype(int)
 y_train = train_labels.astype(np.int64)
 
