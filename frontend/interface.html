@@ -138,18 +138,21 @@
     flattenedOutput.textContent = binarized.join(", ");
     flattenedContainer.style.display = 'block';
 
-    fetch("https://annguyenhoang-barebones-mnist.hf.space/predict", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ image: binarized })
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log("Prediction:", data.prediction);
-    })
-    .catch(error => console.error("Prediction error:", error));
-
+      fetch("https://annguyenhoang-barebones-mnist.hf.space/predict", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ image: binarized })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log("Prediction:", data.prediction);
+    output.textContent = `Prediction: ${data.prediction}`;
+  })
+  .catch(error => {
+    console.error("Prediction error:", error);
+    output.textContent = "Error getting prediction.";
   });
+});
 </script>
 
 </body>
