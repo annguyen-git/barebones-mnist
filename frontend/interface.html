@@ -138,18 +138,17 @@
     flattenedOutput.textContent = binarized.join(", ");
     flattenedContainer.style.display = 'block';
 
-    fetch("http://5.150.216.178:8000/predict", {
+    fetch("https://annguyenhoang--barebones-mnist.hf.space/predict", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ image: binarized })
     })
-    .then(res => res.json())
+    .then(response => response.json())
     .then(data => {
-      output.textContent = "Prediction: " + data.prediction;
+      console.log("Prediction:", data.prediction);
     })
-    .catch(err => {
-      output.textContent = "Error: " + err;
-    });
+    .catch(error => console.error("Prediction error:", error));
+
   });
 </script>
 
