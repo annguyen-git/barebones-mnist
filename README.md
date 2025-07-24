@@ -25,4 +25,4 @@ After:
 - Build the model with random initial weights and biases.
 - Train the model and export weights and biases to csv.
 - Deploy the model and simple interface on the phone.
-### [Test It Here](http://5.150.216.178:8000/)
+### [Test It Here](https://annguyen-git.github.io/barebones-mnist/frontend/interface.html)
